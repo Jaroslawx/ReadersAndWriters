@@ -1,14 +1,17 @@
 #include <iostream>
 #include <unistd.h>
 #include <pthread.h>
+#include <ctime>
 
-volatile unsigned int readersCount, writersCount; // number of all readers and writers
-volatile unsigned int reading, writing; // number of readers, writers actually in reading room
-
-#define CHOICE 1 // choice of solution
+unsigned int readers_count, writers_count; // number of all readers and writers
+unsigned int reading, writing; // number of readers, writers actually in reading room
+int choice = 1; // choice of solution
 
 #define printStatus() \
-std::cout << "ReaderQ: %i WriterQ: %i [in: R: %i W: %i]\n ", readersCount, writersCount, reading, writing;
+std::cout << "ReaderQ: %i WriterQ: %i [in: R: %i W: %i]\n ", readers_count, writers_count, reading, writing;
+
+//Needed?
+//#define randomTime() (rand() % 1000;) // random time between 0 and 1000
 
 using namespace std;
 
@@ -38,7 +41,15 @@ namespace parse {
 
 }
 
-int main(int argc, char **argv) {
-    cout << "Test" << endl;
+int main(int argc, char *argv[]) {
+
+    if (argc < 3){
+        return -1;
+    }
+
+    int readers_count = atoi(argv[1]);
+    int writers_count = atoi(argv[2]);
+    int choice = atoi(argv[3]);
+
     return 0;
 }

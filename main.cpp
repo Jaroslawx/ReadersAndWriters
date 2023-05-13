@@ -45,12 +45,15 @@ namespace parse {
                 case 'R':
                     if (sscanf(optarg, "%u", &readers_count) < 1)
                         return -1;
+                    break;
                 case 'W':
                     if (sscanf(optarg, "%u", &writers_count) < 1)
                         return -2;
+                    break;
                 case 'C':
                     if (sscanf(optarg, "%u", &choice) < 1)
                         return -3;
+                    break;
                 default:
                     cout << "Invalid arguments!\n" << endl;
                     break;

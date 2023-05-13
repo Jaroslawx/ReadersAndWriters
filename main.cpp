@@ -22,9 +22,9 @@ using namespace std;
 namespace common {
     void display_usage (int readers, int writers) {
         string usage = "Usage: "
-                       " readersCount writersCount solution_choice"
+                       " readers_count writers_count solution_choice"
                        "\n"
-                       "Description:\n"
+                       "Description:\n" //TODO extend description
                        "    ReadersAndWriters is a program that simulates the Readers and Writers problem.\n"
                        "\n"
                        "Options:\n"
@@ -38,18 +38,37 @@ namespace common {
 }
 
 namespace parse {
+    int parse_parameters(int argc, char *argv[]) {
+        int temp;
+        while ((temp = getopt(argc, argv, "R W C")) != -1) {
+            switch (temp) {
+                case 'R':
+                    if (sscanf(optarg, "%u", &readers_count) < 1)
+                        return -1;
+                case 'W':
+                    if (sscanf(optarg, "%u", &writers_count) < 1)
+                        return -2;
+                case 'C':
+                    if (sscanf(optarg, "%u", &choice) < 1)
+                        return -3;
+                default:
+                    cout << "Invalid arguments!\n" << endl;
+                    break;
+            }
+        }
 
+        return 0;
+    }
 }
 
 int main(int argc, char *argv[]) {
 
     if (argc < 3){
+        cout << " Not enough arguments!\n" << endl;
         return -1;
     }
 
-    int readers_count = atoi(argv[1]);
-    int writers_count = atoi(argv[2]);
-    int choice = atoi(argv[3]);
+    parse::parse_parameters(argc, argv);
 
     return 0;
 }

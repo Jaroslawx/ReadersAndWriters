@@ -19,11 +19,11 @@ using namespace std;
 #include "third_solution.h"
 
 namespace common {
-    void display_usage (int readers, int writers) {
+    void display_usage(int readers, int writers) {
         string usage = "Usage: "
                        " readers_count writers_count solution_choice"
                        "\n"
-                       "Description:\n" //TODO extend description
+                       "Description:\n" // TODO extend description
                        "    ReadersAndWriters is a program that simulates the Readers and Writers problem.\n"
                        "\n"
                        "Options:\n"
@@ -31,8 +31,8 @@ namespace common {
                        "\n"
                        "Example usage:\n"
                        "10 3 1\n";
-                        // TODO ask, how example usage should look like
-                        // prop: R: 10 W: 3 S: 1 | -R 10 -W 3 -S 1 | 10 3 1 | R- 10 W- 3 S- 1
+        // TODO ask, how example usage should look like
+        // prop: R: 10 W: 3 S: 1 | -R 10 -W 3 -S 1 | 10 3 1 | R- 10 W- 3 S- 1
         cout << usage << endl;
     }
 
@@ -44,7 +44,7 @@ namespace common {
 
 namespace parse {
     int parse_parameters(int argc, char *argv[]) {
-        //TODO change sscanf to strtoul(optarg, nullptr, 10) ???
+        // TODO change sscanf to strtoul(optarg, nullptr, 10) ???
         int temp;
         while ((temp = getopt(argc, argv, "R W C")) != -1) {
             switch (temp) {
@@ -102,7 +102,7 @@ namespace run {
 
 int main(int argc, char *argv[]) {
 
-    if (argc < 3){
+    if (argc < 3) {
         cout << " Not enough arguments!\n" << endl;
         return -1;
     }
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
     parse::parse_parameters(argc, argv);
     parse::rw_reset();
 
-    //TODO add action for choice - start 1, 2 or 3 solution
+    // TODO add action for choice - start 1, 2 or 3 solution
     run::start_solution(choice); // good?
 
     return 0;

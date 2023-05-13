@@ -2,7 +2,7 @@
 #define READERSANDWRITERS_SECOND_SOLUTION_H
 
 namespace second_solution {
-    void display_usage () {
+    void display_usage() {
         string usage = "Solution description:\n"
                        "    The solution with the possibility of readers starvation.\n";
         cout << usage << endl;

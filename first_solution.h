@@ -6,20 +6,20 @@ pthread_mutex_t readerMutex; // A binary semaphore that provides access to the i
 pthread_mutex_t writersLock; // A binary semaphore that blocks access to the reading room for all writers or grants only one at a time.
 
 namespace first_solution {
-    void display_usage () {
+    void display_usage() {
         string usage = "Solution description:\n"
                        "    The solution with the possibility of writers starvation.\n";
         cout << usage << endl;
     }
 
-    void* reader(void* arg) {
+    void *reader(void *arg) {
 
         // TODO add reading action
 
         return NULL;
     }
 
-    void* writer(void* arg) {
+    void *writer(void *arg) {
 
         // TODO add writing action
 

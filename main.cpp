@@ -10,8 +10,7 @@ int choice = 1; // choice of solution
 #define printStatus() \
 std::cout << "ReaderQ: %i WriterQ: %i [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing;
 
-//Needed?
-//#define randomTime() (rand() % 1000;) // random time between 0 and 1000
+#define randomTime() (rand() % 1000;) // random time between 0 and 1000
 
 using namespace std;
 
@@ -37,6 +36,10 @@ namespace common {
         cout << usage << endl;
     }
 
+    // announcing if someone leave and enter to reading room
+    void rr_statement() {
+        cout << "Readers and Writers problem" << endl;
+    }
 }
 
 namespace parse {

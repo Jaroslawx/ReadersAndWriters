@@ -1,8 +1,9 @@
 #ifndef READERSANDWRITERS_FIRST_SOLUTION_H
 #define READERSANDWRITERS_FIRST_SOLUTION_H
 
-pthread_mutex_t readerMutex;
-pthread_mutex_t writersLock;
+// TODO ask is it good thinking process? good way to solve the problem?
+pthread_mutex_t readerMutex; // A binary semaphore that provides access to the input or output section to only one reader at a time.
+pthread_mutex_t writersLock; // A binary semaphore that blocks access to the reading room for all writers or grants only one at a time.
 
 namespace first_solution {
     void display_usage () {

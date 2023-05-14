@@ -25,8 +25,7 @@ namespace first_solution {
 
             usleep(randomTime()); // The reader reads for a random time.
 
-            pthread_mutex_lock(
-                    &readerMutex); // The reader waits for another reader to release the enter section, or blocks other readers access it.
+            pthread_mutex_lock(&readerMutex); // The reader waits for another reader to release the enter section, or blocks other readers access it.
             reading--; // The reader leaves the reading room.
 
             if (reading == 0) { // If this is last reader leaving reading room

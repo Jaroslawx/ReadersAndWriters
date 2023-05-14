@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <cstdlib>
 
 unsigned int readers_count, writers_count; // number of all readers and writers
 unsigned int reading, writing; // number of readers, writers actually in reading room
@@ -10,7 +11,7 @@ int choice = 1; // choice of solution
 #define printStatus() \
 std::cout << "ReaderQ: %i WriterQ: %i [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing;
 
-#define randomTime() (rand() % 1000;) // random time between 0 and 1000
+#define randomTime() (rand() % 1000) // random time between 0 and 1000
 
 using namespace std;
 
@@ -23,7 +24,7 @@ namespace common {
         string usage = "Usage: "
                        " readers_count writers_count solution_choice"
                        "\n"
-                       "Description:\n" // TODO extend description
+                       "Description:\n" //TODO extend description
                        "    ReadersAndWriters is a program that simulates the Readers and Writers problem.\n"
                        "\n"
                        "Options:\n"
@@ -31,12 +32,12 @@ namespace common {
                        "\n"
                        "Example usage:\n"
                        "10 3 1\n";
-        // TODO ask, how example usage should look like
+        //TODO ask, how example usage should look like
         // prop: R: 10 W: 3 S: 1 | -R 10 -W 3 -S 1 | 10 3 1 | R- 10 W- 3 S- 1
         cout << usage << endl;
     }
 
-    // announcing if someone leave and enter to reading room
+    // announcing if someone enter or leave to reading room
     void rr_statement() {
         cout << "Readers and Writers problem" << endl;
     }
@@ -44,7 +45,7 @@ namespace common {
 
 namespace parse {
     int parse_parameters(int argc, char *argv[]) {
-        // TODO change sscanf to strtoul(optarg, nullptr, 10) ???
+        //TODO change sscanf to strtoul(optarg, nullptr, 10) ???
         int temp;
         while ((temp = getopt(argc, argv, "R W C")) != -1) {
             switch (temp) {
@@ -110,7 +111,7 @@ int main(int argc, char *argv[]) {
     parse::parse_parameters(argc, argv);
     parse::rw_reset();
 
-    // TODO add action for choice - start 1, 2 or 3 solution
+    //TODO add action for choice - start 1, 2 or 3 solution
     run::start_solution(choice); // good?
 
     return 0;

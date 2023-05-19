@@ -1,8 +1,10 @@
 #include <iostream>
 #include <unistd.h>
+#include <vector>
 #include <pthread.h>
 #include <stdlib.h>
 #include <cstdlib>
+
 
 unsigned int readers_count, writers_count; // number of all readers and writers
 unsigned int reading, writing; // number of readers, writers actually in reading room
@@ -24,54 +26,66 @@ namespace common {
         string usage = "Usage: "
                        " readers_count writers_count solution_choice"
                        "\n"
-                       "Description:\n" //TODO extend description
-                       "    ReadersAndWriters is a program that simulates the Readers and Writers problem.\n"
+                       "Description:\n"
+                       "    Readers and Writers is a program that aims to solve the problem of readers and writers using a certain reading room. In this reading room there can be any number of readers at the same time, one writer or none. There are three different solutions to this problem: the first allows for starvation of writers, the second allows for starvation of readers, and the third eliminates starvation.\n"
                        "\n"
                        "Options:\n"
                        "  1, 2 or 3 choose between available solutions\n"
                        "\n"
                        "Example usage:\n"
-                       "10 3 1\n";
-        //TODO ask, how example usage should look like
-        // prop: R: 10 W: 3 S: 1 | -R 10 -W 3 -S 1 | 10 3 1 | R- 10 W- 3 S- 1
+                       "R:10 W:3 S:1\n";
         cout << usage << endl;
+    }
+
+    bool string_contain(const string &text, const string &contains) {
+        if (text.find(contains, 0) != string::npos) {
+            return true;
+        }
+        return false;
     }
 
     // announcing if someone enter or leave to reading room
     void rr_statement() {
-        cout << "Readers and Writers problem" << endl;
+        cout << "announcement" << endl;
     }
 }
 
 namespace parse {
-    int parse_parameters(int argc, char *argv[]) {
-        //TODO change sscanf to strtoul(optarg, nullptr, 10) ???
-        int temp;
-        while ((temp = getopt(argc, argv, "R W C")) != -1) {
-            switch (temp) {
-                case 'R':
-                    if (sscanf(optarg, "%u", &readers_count) < 1)
-                        return -1;
-                    break;
-                case 'W':
-                    if (sscanf(optarg, "%u", &writers_count) < 1)
-                        return -2;
-                    break;
-                case 'C':
-                    if (sscanf(optarg, "%u", &choice) < 1)
-                        return -3;
-                    break;
-                case '?':
-                    cout << "Unknown arguments!\n" << endl;
-                    return -4;
-                    break;
-                default:
-                    cout << "Invalid arguments!\n" << endl;
-                    break;
+    void parse_parameter(const string &arg) {
+        if (common::string_contain(arg, "R:")) {
+            try {
+                string readers_str = arg.substr(arg.find(':') + 1);
+                readers_count = stoi(readers_str);
+
+            } catch (exception &e) {
+                cerr << "Failed to parse readers parameter " << arg << " due to: " << e.what() << endl;
+                exit(-1);
             }
         }
+        else if (common::string_contain(arg, "W:")) {
+            try {
+                string writers_str = arg.substr(arg.find(':') + 1);
+                writers_count = stoi(writers_str);
 
-        return 0;
+            } catch (exception &e) {
+                cerr << "Failed to parse writers parameter " << arg << " due to: " << e.what() << endl;
+                exit(-2);
+            }
+        }
+        else if (common::string_contain(arg, "S:")) {
+            try {
+                string solution_str = arg.substr(arg.find(':') + 1);
+                choice = stoi(solution_str);
+
+            } catch (exception &e) {
+                cerr << "Failed to parse solution parameter " << arg << " due to: " << e.what() << endl;
+                exit(-3);
+            }
+        }
+        else {
+            cerr << "Unknown parameter " << arg << endl;
+            exit(-4);
+        }
     }
 
     // readers and writers reset
@@ -108,11 +122,19 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    parse::parse_parameters(argc, argv);
+    vector<string> args;
+    for (int i = 1; i < argc; i++) {
+        args.emplace_back(argv[i]);
+    }
+
+    for (const auto &item: args) {
+        parse::parse_parameter(item);
+    }
+
     parse::rw_reset();
 
-    //TODO add action for choice - start 1, 2 or 3 solution
-    run::start_solution(choice); // good?
+    //TODO there shouldn't be a global variable here
+    run::start_solution(choice);
 
     return 0;
 }

@@ -2,14 +2,27 @@
 #define READERSANDWRITERS_THIRD_SOLUTION_H
 
 namespace third_solution {
-    void display_usage() {
-        string usage = "Solution description:\n"
-                       "    The solution excluding starvation.\n";
-        cout << usage << endl;
+    void display_info() {
+        string info = "Third solution\n"
+                      "Description:\n"
+                      "    The solution excluding starvation.\n";
+        cout << info << endl;
+    }
+
+
+
+    void* reader(void *arg) {
+
+    }
+
+    void* writer(void *arg) {
+
     }
 
     void run() {
-        cout << "Third solution" << endl;
+        display_info();
+
+
     }
 }
 

@@ -5,15 +5,14 @@
 #include <stdlib.h>
 #include <cstdlib>
 
-
 unsigned int readers_count, writers_count; // number of all readers and writers
 unsigned int reading, writing; // number of readers, writers actually in reading room
-int choice = 1; // choice of solution
+int choice = 1; // choice of solution //TODO: remove, put to int main()
 
 #define printStatus() \
 std::cout << "ReaderQ: %i WriterQ: %i [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing;
 
-#define randomTime() (rand() % 1000) // random time between 0 and 1000
+#define randomTime() (rand() % 100) // random time between 0 and 100
 
 using namespace std;
 
@@ -44,7 +43,7 @@ namespace common {
         return false;
     }
 
-    // announcing if someone enter or leave to reading room
+    // announcing if someone enter or leave to reading room, TODO: need?
     void rr_statement() {
         cout << "announcement" << endl;
     }

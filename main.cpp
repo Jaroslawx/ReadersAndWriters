@@ -9,10 +9,10 @@ unsigned int readers_count, writers_count; // number of all readers and writers
 unsigned int reading, writing; // number of readers, writers actually in reading room
 int choice = 1; // choice of solution //TODO: remove, put to int main()
 
-#define printStatus() \
+#define print_status() \
 std::cout << "ReaderQ: %i WriterQ: %i [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing;
 
-#define randomTime() (rand() % 100) // random time between 0 and 100
+#define random_time() (rand() % 100) // random time between 0 and 100
 
 using namespace std;
 
@@ -60,8 +60,7 @@ namespace parse {
                 cerr << "Failed to parse readers parameter " << arg << " due to: " << e.what() << endl;
                 exit(-1);
             }
-        }
-        else if (common::string_contain(arg, "W:")) {
+        } else if (common::string_contain(arg, "W:")) {
             try {
                 string writers_str = arg.substr(arg.find(':') + 1);
                 writers_count = stoi(writers_str);
@@ -70,8 +69,7 @@ namespace parse {
                 cerr << "Failed to parse writers parameter " << arg << " due to: " << e.what() << endl;
                 exit(-2);
             }
-        }
-        else if (common::string_contain(arg, "S:")) {
+        } else if (common::string_contain(arg, "S:")) {
             try {
                 string solution_str = arg.substr(arg.find(':') + 1);
                 choice = stoi(solution_str);
@@ -80,8 +78,7 @@ namespace parse {
                 cerr << "Failed to parse solution parameter " << arg << " due to: " << e.what() << endl;
                 exit(-3);
             }
-        }
-        else {
+        } else {
             cerr << "Unknown parameter " << arg << endl;
             exit(-4);
         }

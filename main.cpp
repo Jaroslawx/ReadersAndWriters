@@ -4,23 +4,33 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <cstdlib>
+#include <random>
 
 unsigned int readers_count, writers_count; // number of all readers and writers
 unsigned int reading, writing; // number of readers, writers actually in reading room
 int choice = 1; // choice of solution //TODO: remove, put to int main()
 
-#define print_status() \
-std::cout << "ReaderQ: %i WriterQ: %i [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing;
+//#define print_status() printf("ReaderQ: %i WriterQ: %i [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing);
+#define print_status() printf("[queue: R: %i W: %i] [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing);
 
 #define random_time() (rand() % 100) // random time between 0 and 100
 
 using namespace std;
+
+int randomNumber() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(5, 10);
+    return dis(gen) * 1000;
+}
 
 #include "first_solution.h"
 #include "second_solution.h"
 #include "third_solution.h"
 
 namespace common {
+
+
     void display_usage(int readers, int writers) {
         string usage = "Usage: "
                        " readers_count writers_count solution_choice"
@@ -50,6 +60,7 @@ namespace common {
 }
 
 namespace parse {
+    //FIXME - replace parse to work with "-"
     void parse_parameter(const string &arg) {
         if (common::string_contain(arg, "R:")) {
             try {

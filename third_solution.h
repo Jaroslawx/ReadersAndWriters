@@ -75,9 +75,9 @@ namespace third_solution {
         srand(time(NULL));
         while (true) {
             start_reading(); // Reader waits or start reading.
-            usleep(random_time()); // Reader reads.
+            usleep(randomNumber()); // Reader reads.
             stop_reading(); // Reader stops reading.
-            usleep(random_time()); // Reader lines up in the queue.
+            usleep(randomNumber()); // Reader lines up in the queue.
         }
     }
 
@@ -85,9 +85,9 @@ namespace third_solution {
         srand(time(NULL));
         while (true) {
             start_writing(); // Writer waits or start writing.
-            usleep(random_time()); // Writer writes.
+            usleep(randomNumber()); // Writer writes.
             stop_writing(); // Writer stops writing.
-            usleep(random_time()); // Writer lines up in the queue.
+            usleep(randomNumber()); // Writer lines up in the queue.
         }
     }
 

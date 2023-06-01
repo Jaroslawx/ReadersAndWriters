@@ -18,7 +18,7 @@ namespace second_solution {
     }
 
     void *reader(void *arg) {
-        srand(time(NULL));
+        
         while (true) {
             pthread_mutex_lock(
                     &reader_lock); // The reader waits, when no writer is in the reading room and no writer is waiting for access to the reading room.
@@ -36,7 +36,7 @@ namespace second_solution {
             pthread_mutex_unlock(&reader_mutex); // The reader releases the enter section to other readers.
             pthread_mutex_unlock(&reader_lock); // The reader enters the reading room.
 
-            usleep(random_time()); // The reader reads.
+            usleep(randomNumber()); // The reader reads.
 
             pthread_mutex_lock(
                     &reader_mutex); // The reader waits for another reader to release the enter section, or blocks other readers access it.
@@ -48,12 +48,12 @@ namespace second_solution {
             }
             pthread_mutex_unlock(&reader_mutex); // The reader releases the enter section to other readers.
 
-            usleep(random_time()); // The reader stands in the queue.
+            usleep(randomNumber()); // The reader stands in the queue.
         }
     }
 
     void *writer(void *arg) {
-        srand(time(NULL));
+        
         while (true) {
             pthread_mutex_lock(
                     &writer_mutex); // The writer waits for another writer to release the enter section, or blocks other writers access it.
@@ -69,7 +69,7 @@ namespace second_solution {
             ++writing;
             print_status();
 
-            usleep(random_time()); // The writer writes.
+            usleep(randomNumber()); // The writer writes.
 
             --writing;
             pthread_mutex_unlock(&writer_lock); // The writer releases the reading room.
@@ -84,7 +84,7 @@ namespace second_solution {
             }
             pthread_mutex_unlock(&writer_mutex); // The writer releases the enter section to other writers.
 
-            usleep(random_time()); // The writer stands in the queue.
+            usleep(randomNumber()); // The writer stands in the queue.
         }
     }
 

@@ -14,7 +14,6 @@ namespace first_solution {
 
     void *reader(void *arg) {
 
-        srand(time(NULL));
         while (true) {
             pthread_mutex_lock(
                     &reader_mutex); // The reader waits for another reader to release the enter section, or blocks other readers access it.
@@ -25,10 +24,9 @@ namespace first_solution {
             print_status();
             pthread_mutex_unlock(&reader_mutex); // The reader releases the enter section to other readers.
 
-            usleep(random_time()); // The reader reads for a random time.
+            usleep(randomNumber()); // The reader reads for a random time.
 
-            pthread_mutex_lock(
-                    &reader_mutex); // The reader waits for another reader to release the enter section, or blocks other readers access it.
+            pthread_mutex_lock(&reader_mutex); // The reader waits for another reader to release the enter section, or blocks other readers access it.
             --reading; // The reader leaves the reading room.
 
             if (reading == 0) { // If this is last reader leaving reading room
@@ -36,26 +34,25 @@ namespace first_solution {
             }
             pthread_mutex_unlock(&reader_mutex); // The reader releases the enter section to other readers.
 
-            usleep(random_time()); // The reader stands in the queue.
+            usleep(randomNumber()); // The reader stands in the queue.
         }
 
     }
 
     void *writer(void *arg) {
 
-        srand(time(NULL));
         while (true) {
             pthread_mutex_lock(
                     &writer_lock); // The writer enters the reading room or is detained if there are readers or another writer in it.
             ++writing; // The writer enters the reading room.
             print_status();
 
-            usleep(random_time()); // The writer writes for a random time.
+            usleep(randomNumber()); // The writer writes for a random time.
 
             --writing; // The writer leaves the reading room.
             pthread_mutex_unlock(&writer_lock); // The writer leaves the reading room.
 
-            usleep(random_time()); // The writer stands in the queue.
+            usleep(randomNumber()); // The writer stands in the queue.
         }
 
     }
@@ -69,20 +66,19 @@ namespace first_solution {
         pthread_t readers[readers_count];
         pthread_t writers[writers_count];
 
-        unsigned int i;
-        for (i = 0; i < readers_count; ++i) {
+        for (int i = 0; i < readers_count; ++i) {
             pthread_create(&readers[i], nullptr, reader, nullptr); // Create readers threads.
         }
         sleep(2); // Wait 2 seconds before creating readers threads to delay the time when they take over the reading room.
 
-        for (i = 0; i < writers_count; ++i) {
+        for (int i = 0; i < writers_count; ++i) {
             pthread_create(&writers[i], nullptr, writer, nullptr); // Create writers threads.
         }
 
-        for (i = 0; i < readers_count; ++i) {
+        for (int i = 0; i < readers_count; ++i) {
             pthread_join(readers[i], nullptr); // Wait for readers threads end.
         }
-        for (i = 0; i < writers_count; ++i) {
+        for (int i = 0; i < writers_count; ++i) {
             pthread_join(writers[i], nullptr); // Wait for writers threads end.
         }
 

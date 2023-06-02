@@ -21,6 +21,7 @@ namespace first_solution {
                 pthread_mutex_lock(&writer_lock); // The reader blocks access to the reading room for all writers.
             }
             ++reading; // The reader enters the reading room.
+            rr_statement(0);
             print_status();
             pthread_mutex_unlock(&reader_mutex); // The reader releases the enter section to other readers.
 
@@ -28,7 +29,7 @@ namespace first_solution {
 
             pthread_mutex_lock(&reader_mutex); // The reader waits for another reader to release the enter section, or blocks other readers access it.
             --reading; // The reader leaves the reading room.
-
+            rr_statement(1);
             if (reading == 0) { // If this is last reader leaving reading room
                 pthread_mutex_unlock(&writer_lock); // The reader releases the reading room for all writers.
             }
@@ -42,14 +43,15 @@ namespace first_solution {
     void *writer(void *arg) {
 
         while (true) {
-            pthread_mutex_lock(
-                    &writer_lock); // The writer enters the reading room or is detained if there are readers or another writer in it.
+            pthread_mutex_lock(&writer_lock); // The writer enters the reading room or is detained if there are readers or another writer in it.
             ++writing; // The writer enters the reading room.
+            rr_statement(2);
             print_status();
 
             usleep(randomNumber()); // The writer writes for a random time.
 
             --writing; // The writer leaves the reading room.
+            rr_statement(3);
             pthread_mutex_unlock(&writer_lock); // The writer leaves the reading room.
 
             usleep(randomNumber()); // The writer stands in the queue.

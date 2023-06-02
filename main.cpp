@@ -12,8 +12,6 @@ unsigned int reading, writing; // number of readers, writers actually in reading
 //#define print_status() printf("ReaderQ: %i WriterQ: %i [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing);
 #define print_status() printf("[queue: R: %i W: %i] [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing);
 
-#define random_time() (rand() % 100) // random time between 0 and 100
-
 using namespace std;
 
 int randomNumber() {
@@ -23,14 +21,24 @@ int randomNumber() {
     return dis(gen) * 1000;
 }
 
+void rr_statement(int type) {
+    if (type == 0) {
+        printf("Reader entered reading room\n");
+    } else if (type == 1) {
+        printf("Reader left reading room\n");
+    } else if (type == 2) {
+        printf("Writer entered reading room\n");
+    } else if (type == 3) {
+        printf("Writer left reading room\n");
+    }
+}
+
 #include "first_solution.h"
 #include "second_solution.h"
 #include "third_solution.h"
 
 namespace common {
-
-
-    void display_usage(int readers, int writers) {
+    void display_usage() {
         string usage = "Usage: "
                        " readers_count writers_count solution_choice"
                        "\n"
@@ -52,17 +60,6 @@ namespace common {
         return false;
     }
 
-    void rr_statement(int type) {
-        if (type == 1) {
-            printf("Reader entered reading room\n");
-        } else if (type == 2) {
-            printf("Writer entered reading room\n");
-        } else if (type == 3) {
-            printf("Reader left reading room\n");
-        } else if (type == 4) {
-            printf("Writer left reading room\n");
-        }
-    }
 }
 
 namespace parse {

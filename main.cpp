@@ -127,8 +127,9 @@ namespace run {
 int main(int argc, char *argv[]) {
     int choice = 0;
 
-    if (argc < 3) {
+    if (argc < 4) {
         cout << " Not enough arguments!\n" << endl;
+        common::display_usage();
         return -1;
     }
 

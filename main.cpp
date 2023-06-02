@@ -8,7 +8,6 @@
 
 unsigned int readers_count, writers_count; // number of all readers and writers
 unsigned int reading, writing; // number of readers, writers actually in reading room
-int choice = 1; // choice of solution //TODO: remove, put to int main()
 
 //#define print_status() printf("ReaderQ: %i WriterQ: %i [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing);
 #define print_status() printf("[queue: R: %i W: %i] [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing);
@@ -42,7 +41,7 @@ namespace common {
                        "  1, 2 or 3 choose between available solutions\n"
                        "\n"
                        "Example usage:\n"
-                       "R:10 W:3 S:1\n";
+                       "-R:10 -W:3 -S:1\n";
         cout << usage << endl;
     }
 
@@ -53,16 +52,22 @@ namespace common {
         return false;
     }
 
-    // announcing if someone enter or leave to reading room, TODO: need?
-    void rr_statement() {
-        cout << "announcement" << endl;
+    void rr_statement(int type) {
+        if (type == 1) {
+            printf("Reader entered reading room\n");
+        } else if (type == 2) {
+            printf("Writer entered reading room\n");
+        } else if (type == 3) {
+            printf("Reader left reading room\n");
+        } else if (type == 4) {
+            printf("Writer left reading room\n");
+        }
     }
 }
 
 namespace parse {
-    //FIXME - replace parse to work with "-"
-    void parse_parameter(const string &arg) {
-        if (common::string_contain(arg, "R:")) {
+    void parse_parameter(const string &arg, int &choice) {
+        if (common::string_contain(arg, "-R:")) {
             try {
                 string readers_str = arg.substr(arg.find(':') + 1);
                 readers_count = stoi(readers_str);
@@ -71,7 +76,7 @@ namespace parse {
                 cerr << "Failed to parse readers parameter " << arg << " due to: " << e.what() << endl;
                 exit(-1);
             }
-        } else if (common::string_contain(arg, "W:")) {
+        } else if (common::string_contain(arg, "-W:")) {
             try {
                 string writers_str = arg.substr(arg.find(':') + 1);
                 writers_count = stoi(writers_str);
@@ -80,7 +85,7 @@ namespace parse {
                 cerr << "Failed to parse writers parameter " << arg << " due to: " << e.what() << endl;
                 exit(-2);
             }
-        } else if (common::string_contain(arg, "S:")) {
+        } else if (common::string_contain(arg, "-S:")) {
             try {
                 string solution_str = arg.substr(arg.find(':') + 1);
                 choice = stoi(solution_str);
@@ -123,6 +128,7 @@ namespace run {
 }
 
 int main(int argc, char *argv[]) {
+    int choice = 0;
 
     if (argc < 3) {
         cout << " Not enough arguments!\n" << endl;
@@ -135,12 +141,10 @@ int main(int argc, char *argv[]) {
     }
 
     for (const auto &item: args) {
-        parse::parse_parameter(item);
+        parse::parse_parameter(item, choice);
     }
 
     parse::rw_reset();
-
-    //TODO there shouldn't be a global variable here
     run::start_solution(choice);
 
     return 0;

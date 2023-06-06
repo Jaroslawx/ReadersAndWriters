@@ -66,7 +66,7 @@ namespace third_solution {
 
         if (waiting_writers == 0) { // If no writer waits.
             pthread_cond_signal(&can_write); // Awake one writer if any writer waits.
-        } else if (waiting_readers > 0) { // If any reader waits.
+        } else { // If any reader waits.
             pthread_cond_broadcast(&can_read); // Awake all readers waiting in the queue.
             reading += waiting_readers; // Add all readers from the queue to the reading room.
             waiting_readers = 0; // Clear the queue.

@@ -30,7 +30,7 @@ namespace second_solution {
                         &writer_lock); // If there is writer in the reading room, the reader stops, other ways blocks other readers access it.
             }
             ++reading;
-            rr_statement(0);
+            rr_statement(Action::READER_ENTER);
             print_status();
 
             pthread_mutex_unlock(&reader_mutex); // The reader releases the enter section to other readers.
@@ -40,7 +40,7 @@ namespace second_solution {
 
             pthread_mutex_lock(&reader_mutex); // The reader waits for another reader to release the enter section, or blocks other readers access it.
             --reading;
-            rr_statement(1);
+            rr_statement(Action::READER_LEFT);
             print_status();
 
             if (reading == 0) {
@@ -65,13 +65,13 @@ namespace second_solution {
 
             pthread_mutex_lock(&writer_lock); // The writer enters the reading room or being blocked by other writer or readers.
             ++writing;
-            rr_statement(2);
+            rr_statement(Action::WRITER_ENTER);
             print_status();
 
             usleep(randomNumber()); // The writer writes.
 
             --writing;
-            rr_statement(3);
+            rr_statement(Action::WRITER_LEFT);
             print_status();
 
             pthread_mutex_unlock(&writer_lock); // The writer releases the reading room.

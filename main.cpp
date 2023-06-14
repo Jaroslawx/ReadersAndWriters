@@ -1,41 +1,90 @@
 #include <iostream>
+#include <atomic>
 #include <unistd.h>
 #include <vector>
 #include <pthread.h>
-#include <stdlib.h>
 #include <cstdlib>
 #include <random>
 
-unsigned int readers_count, writers_count; // number of all readers and writers
-unsigned int reading, writing; // number of readers, writers actually in reading room
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/syscall.h>
+
+//unsigned int readers_count, writers_count; // number of all readers and writers
+unsigned int readers_count, writers_count; // number of readers and writers waiting in queue
+std::atomic<int> reading = 0, writing = 0; // number of readers, writers actually in reading room
+#define debug_detail true
 
 //#define print_status() printf("ReaderQ: %i WriterQ: %i [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing);
-#define print_status() printf("[queue: R: %i W: %i] [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing);
+//#define print_status() printf("[queue: R: %i W: %i] [in: R: %i W: %i]\n ", readers_count - reading, writers_count - writing, reading, writing);
 
 using namespace std;
+
+namespace watchdog {
+    void perform_check() {
+        //library is empty
+        if (readers_count == 0 && writers_count == 0) {
+            return;
+        }
+
+        //first condition - only one of them can be > 0
+        if (reading > 0 && writing > 0) {
+            cout << "Error: reading and writing at the same time!" << endl;
+            exit(-1);
+        }
+
+        //second condition
+
+    }
+}
 
 int randomNumber() {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(5, 10);
-    return dis(gen) * 1000;
+    std::uniform_int_distribution<> dis(3, 5);
+    return dis(gen);
 }
 
-void rr_statement(int type) {
+std::string get_current_date_time() {
+    time_t now = time(nullptr);
+    tm *ltm = localtime(&now);
+    return to_string(ltm->tm_hour) + ":" + to_string(ltm->tm_min) + ":" + to_string(ltm->tm_sec);
+}
+
+void print_status() {
+    cout << get_current_date_time() << " [queue: R: " << readers_count - reading << " W: " << writers_count - writing
+         << "] [in: R: "
+         << reading << " W: " << writing << "]" << endl;
+    watchdog::perform_check();
+
+}
+
+enum Action {
+    READER_ENTER = 0, READER_LEFT = 1, WRITER_ENTER = 2, WRITER_LEFT = 3
+};
+
+void rr_statement(Action type, int time = -1) {
+#if debug_detail
+    pid_t x = syscall(__NR_gettid);
+    int type_int = static_cast<int>(x);
+    string date = get_current_date_time();
+
     if (type == 0) {
-        printf("Reader entered reading room\n");
+        cout << date << " Reader " << type_int << " reads for " << time << " seconds" << endl;
     } else if (type == 1) {
-        printf("Reader left reading room\n");
+        cout << date << " Reader " << type_int << " left reading room" << endl;
     } else if (type == 2) {
-        printf("Writer entered reading room\n");
+        cout << date << " Writer " << type_int << " writes for " << time << " seconds" << endl;
     } else if (type == 3) {
-        printf("Writer left reading room\n");
+        cout << date << " Writer " << type_int << " left reading room" << endl;
     }
+#endif
 }
 
 #include "first_solution.h"
 #include "second_solution.h"
 #include "third_solution.h"
+
 
 namespace common {
     void display_usage() {
@@ -59,6 +108,7 @@ namespace common {
         }
         return false;
     }
+
 
 }
 
@@ -127,19 +177,18 @@ namespace run {
 int main(int argc, char *argv[]) {
     int choice = 0;
 
+    for (int i = 0; i < 10; ++i) {
+        cout << randomNumber() << endl;
+    }
+
     if (argc < 4) {
         cout << " Not enough arguments!\n" << endl;
         common::display_usage();
         return -1;
     }
 
-    vector<string> args;
     for (int i = 1; i < argc; i++) {
-        args.emplace_back(argv[i]);
-    }
-
-    for (const auto &item: args) {
-        parse::parse_parameter(item, choice);
+        parse::parse_parameter(argv[i], choice);
     }
 
     parse::rw_reset();

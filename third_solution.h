@@ -26,8 +26,8 @@ namespace third_solution {
             // The reader stops waiting and occupies the mutex again.
         } else { // If there is no writer waiting or writing.
             ++reading;
-            rr_statement(0);
-            print_status()
+            rr_statement(Action::READER_ENTER);
+            print_status();
         }
         pthread_mutex_unlock(&mutex); // The reader releases mutex.
     }
@@ -36,7 +36,7 @@ namespace third_solution {
         pthread_mutex_lock(&mutex); // The reader occupies the mutex or waits for it to be released.
 
         --reading;
-        rr_statement(1);
+        rr_statement(Action::READER_LEFT);
         print_status();
 
         if (reading == 0) { // If no reader reads.
@@ -55,7 +55,7 @@ namespace third_solution {
             --waiting_writers;
         }
         writing = 1;
-        rr_statement(2);
+        rr_statement(Action::WRITER_ENTER);
         print_status();
         pthread_mutex_unlock(&mutex); // The writer releases mutex.
     }
@@ -70,8 +70,8 @@ namespace third_solution {
             pthread_cond_broadcast(&can_read); // Awake all readers waiting in the queue.
             reading += waiting_readers; // Add all readers from the queue to the reading room.
             waiting_readers = 0; // Clear the queue.
-            rr_statement(3);
-            print_status()
+            rr_statement(Action::WRITER_LEFT);
+            print_status();
         }
         pthread_mutex_unlock(&mutex); // The writer releases mutex.
     }

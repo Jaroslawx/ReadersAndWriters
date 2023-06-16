@@ -177,10 +177,6 @@ namespace run {
 int main(int argc, char *argv[]) {
     int choice = 0;
 
-    for (int i = 0; i < 10; ++i) {
-        cout << portable::randomNumber() << endl;
-    }
-
     if (argc < 4) {
         cout << " Not enough arguments!\n" << endl;
         common::display_usage();

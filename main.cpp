@@ -32,59 +32,59 @@ namespace watchdog {
             cout << "Error: reading and writing at the same time!" << endl;
             exit(-1);
         }
-
-        //second condition
-
     }
 }
 
-int randomNumber() {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(3, 5);
-    return dis(gen);
-}
+namespace portable {
 
-std::string get_current_date_time() {
-    time_t now = time(nullptr);
-    tm *ltm = localtime(&now);
-    return to_string(ltm->tm_hour) + ":" + to_string(ltm->tm_min) + ":" + to_string(ltm->tm_sec);
-}
-
-void print_status() {
-    cout << get_current_date_time() << " [queue: R: " << readers_count - reading << " W: " << writers_count - writing
-         << "] [in: R: "
-         << reading << " W: " << writing << "]" << endl;
-    watchdog::perform_check();
-
-}
-
-enum Action {
-    READER_ENTER = 0, READER_LEFT = 1, WRITER_ENTER = 2, WRITER_LEFT = 3
-};
-
-void rr_statement(Action type, int time = -1) {
-#if debug_detail
-    pid_t x = syscall(__NR_gettid);
-    int type_int = static_cast<int>(x);
-    string date = get_current_date_time();
-
-    if (type == 0) {
-        cout << date << " Reader " << type_int << " reads for " << time << " seconds" << endl;
-    } else if (type == 1) {
-        cout << date << " Reader " << type_int << " left reading room" << endl;
-    } else if (type == 2) {
-        cout << date << " Writer " << type_int << " writes for " << time << " seconds" << endl;
-    } else if (type == 3) {
-        cout << date << " Writer " << type_int << " left reading room" << endl;
+    int randomNumber() {
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<> dis(3, 5);
+        return dis(gen);
     }
-#endif
+
+    string get_current_date_time() {
+        time_t now = time(nullptr);
+        tm *ltm = localtime(&now);
+        string date = to_string(ltm->tm_hour) + ":" + to_string(ltm->tm_min) + ":" + to_string(ltm->tm_sec);
+        return date;
+    }
+
+    void print_status() {
+        cout << get_current_date_time() << " [queue: R: " << readers_count - reading << " W: " << writers_count - writing
+             << "] [in: R: "
+             << reading << " W: " << writing << "]" << endl;
+        watchdog::perform_check();
+
+    }
+
+    enum Action {
+        READER_ENTER = 0, READER_LEFT = 1, WRITER_ENTER = 2, WRITER_LEFT = 3
+    };
+
+    void rr_statement(Action type, int time = -1) {
+    #if debug_detail
+        pid_t x = syscall(__NR_gettid);
+        int type_int = static_cast<int>(x);
+        string date = get_current_date_time();
+
+        if (type == 0) {
+            cout << date << " Reader " << type_int << " reads for " << time << " seconds" << endl;
+        } else if (type == 1) {
+            cout << date << " Reader " << type_int << " left reading room" << endl;
+        } else if (type == 2) {
+            cout << date << " Writer " << type_int << " writes for " << time << " seconds" << endl;
+        } else if (type == 3) {
+            cout << date << " Writer " << type_int << " left reading room" << endl;
+        }
+    #endif
+    }
 }
 
 #include "first_solution.h"
 #include "second_solution.h"
 #include "third_solution.h"
-
 
 namespace common {
     void display_usage() {
@@ -178,7 +178,7 @@ int main(int argc, char *argv[]) {
     int choice = 0;
 
     for (int i = 0; i < 10; ++i) {
-        cout << randomNumber() << endl;
+        cout << portable::randomNumber() << endl;
     }
 
     if (argc < 4) {

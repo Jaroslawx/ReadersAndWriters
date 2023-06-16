@@ -22,10 +22,10 @@ namespace first_solution {
             }
 
             ++reading; // The reader enters the reading room.
-            int readTime = randomNumber();
-            rr_statement(Action::READER_ENTER, readTime);
+            int readTime = portable::randomNumber();
+            rr_statement(portable::Action::READER_ENTER, readTime);
 
-            print_status();
+            portable::print_status();
             pthread_mutex_unlock(&reader_mutex); // The reader releases the enter section to other readers.
 
             sleep(readTime); // The reader reads for a random time.
@@ -33,13 +33,13 @@ namespace first_solution {
             pthread_mutex_lock(
                     &reader_mutex); // The reader waits for another reader to release the enter section, or blocks other readers access it.
             --reading; // The reader leaves the reading room.
-            rr_statement(Action::READER_LEFT);
+            rr_statement(portable::Action::READER_LEFT);
             if (reading == 0) { // If this is last reader leaving reading room
                 pthread_mutex_unlock(&writer_lock); // The reader releases the reading room for all writers.
             }
             pthread_mutex_unlock(&reader_mutex); // The reader releases the enter section to other readers.
 
-            sleep(randomNumber()); // The reader stands in the queue.
+            sleep(portable::randomNumber()); // The reader stands in the queue.
         }
 
     }
@@ -50,17 +50,17 @@ namespace first_solution {
             pthread_mutex_lock(
                     &writer_lock); // The writer enters the reading room or is detained if there are readers or another writer in it.
             ++writing; // The writer enters the reading room.
-            int writeTime = randomNumber();
-            rr_statement(Action::WRITER_ENTER, writeTime);
-            print_status();
+            int writeTime = portable::randomNumber();
+            rr_statement(portable::Action::WRITER_ENTER, writeTime);
+            portable::print_status();
 
             sleep(writeTime); // The writer writes for a random time.
 
             --writing; // The writer leaves the reading room.
-            rr_statement(Action::WRITER_LEFT);
+            rr_statement(portable::Action::WRITER_LEFT);
             pthread_mutex_unlock(&writer_lock); // The writer leaves the reading room.
 
-            sleep(randomNumber()); // The writer stands in the queue.
+            sleep(portable::randomNumber()); // The writer stands in the queue.
         }
 
     }

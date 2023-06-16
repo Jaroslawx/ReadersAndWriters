@@ -2,7 +2,7 @@
 #define READERSANDWRITERS_SECOND_SOLUTION_H
 
 namespace second_solution {
-    unsigned int writing_or_waiting = 0; // The number of writers waiting for access to the reading room or writing (max one at the moment).
+    std::atomic<unsigned int> writing_or_waiting(0); // The number of writers waiting for access to the reading room or writing (max one at the moment).
 
     pthread_mutex_t reader_mutex; // A binary semaphore that provides access to the input or output section to only one reader at a time.
     pthread_mutex_t writer_mutex; // A binary semaphore that provides access to the input or output section to only one writer at a time.
@@ -18,73 +18,70 @@ namespace second_solution {
     }
 
     void *reader(void *arg) {
-        
         while (true) {
-            pthread_mutex_lock(
-                    &reader_lock); // The reader waits, when no writer is in the reading room and no writer is waiting for access to the reading room.
-            pthread_mutex_lock(
-                    &reader_mutex); // The reader waits for another reader to release the enter section, or blocks other readers access it.
-
-            if (reading == 0) { // If this is first reader entering reading room after writer
-                pthread_mutex_lock(
-                        &writer_lock); // If there is writer in the reading room, the reader stops, other ways blocks other readers access it.
-            }
-            ++reading;
-            rr_statement(Action::READER_ENTER);
-            print_status();
-
-            pthread_mutex_unlock(&reader_mutex); // The reader releases the enter section to other readers.
-            pthread_mutex_unlock(&reader_lock); // The reader enters the reading room.
-
-            usleep(randomNumber()); // The reader reads.
-
-            pthread_mutex_lock(&reader_mutex); // The reader waits for another reader to release the enter section, or blocks other readers access it.
-            --reading;
-            rr_statement(Action::READER_LEFT);
-            print_status();
+            pthread_mutex_lock(&reader_lock);
+            pthread_mutex_lock(&reader_mutex);
 
             if (reading == 0) {
-                pthread_mutex_unlock(&writer_lock); // If there is no readers in the reading room, the reader releases the reading room for all writers.
+                pthread_mutex_lock(&writer_lock);
             }
-            pthread_mutex_unlock(&reader_mutex); // The reader releases the enter section to other readers.
+            ++reading;
+            int readTime = portable::randomNumber();
+            rr_statement(portable::Action::READER_ENTER, readTime);
+            portable::print_status();
 
-            usleep(randomNumber()); // The reader stands in the queue.
+            pthread_mutex_unlock(&reader_mutex);
+            pthread_mutex_unlock(&reader_lock);
+
+            sleep(readTime);
+
+            pthread_mutex_lock(&reader_mutex);
+            --reading;
+            rr_statement(portable::Action::READER_LEFT);
+            portable::print_status();
+
+            if (reading == 0) {
+                pthread_mutex_unlock(&writer_lock);
+            }
+            pthread_mutex_unlock(&reader_mutex);
+
+            sleep(portable::randomNumber());
         }
     }
 
     void *writer(void *arg) {
-        
         while (true) {
-            pthread_mutex_lock(&writer_mutex); // The writer waits for another writer to release the enter section, or blocks other writers access it.
+            pthread_mutex_lock(&writer_mutex);
             ++writing_or_waiting;
 
             if (writing_or_waiting == 1) {
-                pthread_mutex_lock(&reader_lock); // Blocks readers access to reading room.
+                pthread_mutex_lock(&reader_lock);
             }
-            pthread_mutex_unlock(&writer_mutex); // The writer releases the enter section to other writers.
+            pthread_mutex_unlock(&writer_mutex);
 
-            pthread_mutex_lock(&writer_lock); // The writer enters the reading room or being blocked by other writer or readers.
+            pthread_mutex_lock(&writer_lock);
             ++writing;
-            rr_statement(Action::WRITER_ENTER);
-            print_status();
+            int writeTime = portable::randomNumber();
+            rr_statement(portable::Action::WRITER_ENTER, writeTime);
+            portable::print_status();
 
-            usleep(randomNumber()); // The writer writes.
+            sleep(writeTime);
 
             --writing;
-            rr_statement(Action::WRITER_LEFT);
-            print_status();
+            rr_statement(portable::Action::WRITER_LEFT);
+            portable::print_status();
 
-            pthread_mutex_unlock(&writer_lock); // The writer releases the reading room.
+            pthread_mutex_unlock(&writer_lock);
 
-            pthread_mutex_lock(&writer_mutex); // The writer waits for another writer to release the enter section, or blocks other writers access it.
+            pthread_mutex_lock(&writer_mutex);
             --writing_or_waiting;
 
             if (writing_or_waiting == 0) {
-                pthread_mutex_unlock(&reader_lock); // If there is no writers waiting for access to the reading room or writing, the writer releases the reading room for all readers.
+                pthread_mutex_unlock(&reader_lock);
             }
-            pthread_mutex_unlock(&writer_mutex); // The writer releases the enter section to other writers.
+            pthread_mutex_unlock(&writer_mutex);
 
-            usleep(randomNumber()); // The writer stands in the queue.
+            sleep(portable::randomNumber());
         }
     }
 

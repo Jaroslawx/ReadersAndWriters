@@ -54,3 +54,6 @@ cmake --build build
 ```shell
 ./readers_writers -R:10 -W:3 -S:1
 ```
+
+## License
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/Jaroslawx/ReadersAndWriters/blob/master/LICENSE) file for details.
